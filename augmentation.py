@@ -29,10 +29,15 @@ class Specaugment:
 	TIME_MASK: int = 80
 	MEL_MASK: int = 2
 
+	def __init__(self):
+		# Attributes are only set and used by the differents methods.
+		self.avg = None
+		self.n_freq = None
+		self.n_time = None
 
 	@classmethod
 	def __time_masking(
-		cls,
+		self,
 		mfcc: np.ndarray,
 		max_mask: int=MAX_TIME_MASK,
 		time_mask: int=TIME_MASK) -> np.ndarray:
@@ -60,15 +65,15 @@ class Specaugment:
 
 		for _ in range(nb_mask):
 			time_mask_size = np.random.randint(0, time_mask + 1)
-			lower_time_mask = np.random.randint(0, cls.n_time - time_mask + 1)
+			lower_time_mask = np.random.randint(0, self.n_time - time_mask + 1)
 			upper_time_mask = lower_time_mask + time_mask_size
-			mfcc[:, lower_time_mask : upper_time_mask + 1] = np.full(mfcc[:, lower_time_mask : upper_time_mask + 1].shape, cls.avg)
+			mfcc[:, lower_time_mask : upper_time_mask + 1] = np.full(mfcc[:, lower_time_mask : upper_time_mask + 1].shape, self.avg)
 
 		return mfcc
 
 	@classmethod
 	def __mel_masking(
-		cls,
+		self,
 		mfcc: np.ndarray,
 		max_mask: int=MAX_MEL_MASKING,
 		mel_mask: int=MEL_MASK) -> np.ndarray:
@@ -96,15 +101,15 @@ class Specaugment:
 
 		for _ in range(nb_mask):
 			frequency_mask_size = np.random.randint(0, mel_mask + 1)
-			lower_frequency_mask = np.random.randint(0, cls.n_freq - mel_mask + 1)
+			lower_frequency_mask = np.random.randint(0, self.n_freq - mel_mask + 1)
 			upper_frequency_mask = lower_frequency_mask + frequency_mask_size
-			mfcc[lower_frequency_mask : upper_frequency_mask + 1] = np.full(mfcc[lower_frequency_mask : upper_frequency_mask + 1].shape, cls.avg)
+			mfcc[lower_frequency_mask : upper_frequency_mask + 1] = np.full(mfcc[lower_frequency_mask : upper_frequency_mask + 1].shape, self.avg)
 
 		return mfcc
 
 	@classmethod
 	def augment(
-		cls,
+		self,
 		mfcc: np.ndarray,
 		time_masking: bool=TIME_MASKING,
 		mel_masking: bool=MEL_MASKING,
@@ -112,7 +117,7 @@ class Specaugment:
 		max_mel_masking: int=MAX_MEL_MASKING,
 		time_mask: int=TIME_MASK,
 		mel_mask: int=MEL_MASK,
-		visualisation: bool=False):
+		visualisation: bool=False) -> np.ndarray:
 		"""
 		Augments the given MFCC for the desired domains.
 
@@ -147,10 +152,6 @@ class Specaugment:
 		mfcc: `np.ndarray`
 			The augmented MFCC.
 		"""
-
-		cls.avg = np.mean(mfcc)
-		cls.n_freq = mfcc.shape[0]
-		cls.n_time = mfcc.shape[1]
 
 		if time_masking:
 			mfcc = Specaugment.__time_masking(mfcc, max_mask=max_time_mask, time_mask=time_mask)
