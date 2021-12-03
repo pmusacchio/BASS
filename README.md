@@ -26,10 +26,11 @@ Its use is very simple. The user can refer to the documentation of the function 
 
 ```python
 from mellib import mfcc
+
 mfcc = mfcc(signal)
 ```
 
-### Augmenting an MFCC
+### Augmenting MFCC
 
 The `augmentation.py` file contains a class that allows an easy way to augment MFCC.
 It follows the implementation described in the specaugment article published by the Google Brain team [[1]](#1).
@@ -38,6 +39,7 @@ Its use is again, very simple. The user can refer to the documentation of the fu
 
 ```python
 from augmentation import Specaugment
+
 augmented_mfcc = Specaugment.augment(mfcc)
 ```
 
